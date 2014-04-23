@@ -49,30 +49,6 @@ public:
 } collectObjects;
 
 
-//creates the objects using their vertexarray, colorarray, elemsarray
-void createObject(GLfloat vert[], int vsize, GLfloat color[], int csize, GLubyte elems[], int esize, paint &obj, int move){
-	obj.move = move;
-	obj.vertarray = (GLfloat*)malloc(sizeof(GLfloat)*vsize);
-	obj.vertsize = vsize;
-	memcpy(obj.vertarray, vert, 4*vsize);
-
-	obj.colorarray = (GLfloat*)malloc(sizeof(GLfloat)*csize);
-	obj.colorsize = csize;
-	memcpy(obj.colorarray, color, 4*csize);
-	
-	obj.elemsarray = (GLubyte*)malloc(sizeof(GLfloat)*esize);
-	obj.elemssize = esize;
-	memcpy(obj.elemsarray, elems, esize);
-	
-	obj.objTran.y = 29.0;
-	obj.objTran.x = randomgen(-27.0, 2.5);
-	
-	//buffers
-	glGenBuffers(2, obj.vboID);
-	glGenBuffers(1,&obj.eboID);
-}
-
-
 //creates player triangle
 void playerD(){
 	GLfloat vert[] = {0.0f,0.0f,
@@ -84,9 +60,22 @@ void playerD(){
 					   1.0f,1.0f,1.0f,1.0f};
 					   
 	GLubyte elems[]={0,1,2};
+	
+	player.vertsize = sizeof(vert);
+	player.colorsize = sizeof(color);
+	player.elemssize = sizeof(elems);
+	player.move = 0;
+	player.vertarray = (GLfloat*)malloc(sizeof(GLfloat)*player.vertsize);
+	player.colorarray = (GLfloat*)malloc(sizeof(GLfloat)*player.colorsize);
+	player.elemsarray = (GLubyte*)malloc(sizeof(GLfloat)*player.elemssize);
+	memcpy(player.vertarray, vert, 4*player.vertsize);
+	memcpy(player.colorarray, color, 4*player.colorsize);
+	memcpy(player.elemsarray, elems, player.elemssize);
+	
+	//buffers
+	glGenBuffers(2, player.vboID);
+	glGenBuffers(1, &player.eboID);
 
-	createObject(vert, sizeof(vert), color, sizeof(color), elems, sizeof(elems), player, 0);
-	//sets initial position of player
 	player.objTran.y = -25.0;
 	player.objTran.x = -12.0;
 }
@@ -162,8 +151,24 @@ void avoidObj(){
 	avoidObjects.blocks[avoidObjects.size].speed = blockspeed;
 	   
 	GLubyte elems[]={0,1,2,3};
+	avoidObjects.blocks[avoidObjects.size].vertsize = sizeof(vert);
+	avoidObjects.blocks[avoidObjects.size].colorsize = sizeof(color);
+	avoidObjects.blocks[avoidObjects.size].elemssize = sizeof(elems);
+	avoidObjects.blocks[avoidObjects.size].move = 1;
+	avoidObjects.blocks[avoidObjects.size].vertarray = (GLfloat*)malloc(sizeof(GLfloat)*avoidObjects.blocks[avoidObjects.size].vertsize);
+	avoidObjects.blocks[avoidObjects.size].colorarray = (GLfloat*)malloc(sizeof(GLfloat)*avoidObjects.blocks[avoidObjects.size].colorsize);
+	avoidObjects.blocks[avoidObjects.size].elemsarray = (GLubyte*)malloc(sizeof(GLfloat)*avoidObjects.blocks[avoidObjects.size].elemssize);
+	memcpy(avoidObjects.blocks[avoidObjects.size].vertarray, vert, 4*avoidObjects.blocks[avoidObjects.size].vertsize);
+	memcpy(avoidObjects.blocks[avoidObjects.size].colorarray, color, 4*avoidObjects.blocks[avoidObjects.size].colorsize);
+	memcpy(avoidObjects.blocks[avoidObjects.size].elemsarray, elems, avoidObjects.blocks[avoidObjects.size].elemssize);
+
+	avoidObjects.blocks[avoidObjects.size].objTran.y = 29.0;
+	avoidObjects.blocks[avoidObjects.size].objTran.x = randomgen(-27.0, 2.5);
 	
-	createObject(vert, sizeof(vert), color, sizeof(color), elems, sizeof(elems), avoidObjects.blocks[avoidObjects.size], 1);
+	//buffers
+	glGenBuffers(2, avoidObjects.blocks[avoidObjects.size].vboID);
+	glGenBuffers(1, &avoidObjects.blocks[avoidObjects.size].eboID);
+
 	avoidObjects.size++;
 }
 
@@ -187,8 +192,25 @@ GLfloat color[]={
 
 	GLfloat speedvarient = randomgen(1.0, 3.0);
 					   
+	collectObjects.diamonds[collectObjects.size].vertsize = sizeof(vert);
+	collectObjects.diamonds[collectObjects.size].colorsize = sizeof(color);
+	collectObjects.diamonds[collectObjects.size].elemssize = sizeof(elems);
+	collectObjects.diamonds[collectObjects.size].move = 1;
+	collectObjects.diamonds[collectObjects.size].vertarray = (GLfloat*)malloc(sizeof(GLfloat)*collectObjects.diamonds[collectObjects.size].vertsize);
+	collectObjects.diamonds[collectObjects.size].colorarray = (GLfloat*)malloc(sizeof(GLfloat)*collectObjects.diamonds[collectObjects.size].colorsize);
+	collectObjects.diamonds[collectObjects.size].elemsarray = (GLubyte*)malloc(sizeof(GLfloat)*collectObjects.diamonds[collectObjects.size].elemssize);
+	memcpy(collectObjects.diamonds[collectObjects.size].vertarray, vert, 4*collectObjects.diamonds[collectObjects.size].vertsize);
+	memcpy(collectObjects.diamonds[collectObjects.size].colorarray, color, 4*collectObjects.diamonds[collectObjects.size].colorsize);
+	memcpy(collectObjects.diamonds[collectObjects.size].elemsarray, elems, collectObjects.diamonds[collectObjects.size].elemssize);
+
+	collectObjects.diamonds[collectObjects.size].objTran.y = 29.0;
+	collectObjects.diamonds[collectObjects.size].objTran.x = randomgen(-27.0, 2.5);
+
+
+	//buffers
+	glGenBuffers(2, collectObjects.diamonds[collectObjects.size].vboID);
+	glGenBuffers(1, &collectObjects.diamonds[collectObjects.size].eboID);
 	
-	createObject(vert, sizeof(vert), color, sizeof(color), elems, sizeof(elems), collectObjects.diamonds[collectObjects.size], 1);
 	collectObjects.diamonds[collectObjects.size].speed = 1.0/speedvarient;
 	collectObjects.size++;
 }
@@ -292,7 +314,7 @@ int main(int argc, char **argv){
     			}
     		}
     	}
-    	prevsecond = (int)difftime(time(NULL), timer); //set the second to compare next iteration
+    	prevsecond = (int)difftime(time(NULL), timer);
     
 		input(window);
 		display(window);
